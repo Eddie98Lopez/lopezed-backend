@@ -14,11 +14,11 @@ async function insertUser(user) {
 }
 
 
-server.get('/', async (req, res) => {
+router.get('/', async (req, res) => {
     res.json(await getAllUsers())
   })
   
-  server.post('/', async (req, res) => {
+router.post('/', async (req, res) => {
     res.status(201).json(await insertUser(req.body))
   })
 

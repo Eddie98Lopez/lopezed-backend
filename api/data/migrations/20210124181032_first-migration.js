@@ -11,38 +11,40 @@ exports.up = async (knex) => {
     messages.string("last").notNullable();
     messages.integer("phone");
     messages.string("email").notNullable();
-    messages.string("message").notNullable();
+    messages.string("message",100000).notNullable();
     messages.timestamps(false, true);
   });
   await knex.schema.createTable("categories", (categories) => {
     categories.increments("category_id");
     categories.string("category").notNullable();
   });
-  await knex.schema.createTable("series", (series) => {
-    series.increments("series_id");
-    series.string("series_name").notNullable();
-    series.string("series_description", 10000).notNullable();
-    series
-      .integer("category_id")
-      .unsigned()
-      .notNullable()
-      .references("category_id")
-      .inTable("categories")
-      .onDelete("CASCADE");
-    series.string("cover_photo");
-    series.boolean('wip').defaultTo(true);
-    series.timestamps(false, true);
+  await knex.schema.createTable("collection", (collection) => {
+    collection.increments("collection_id");
+    collection.string("collection").notNullable();
+    collection.string("collection_description", 10000);
+    collection.string("cover_photo");
+    collection.timestamps(false, true);
   });
-  await knex.schema.createTable("pieces", (pieces) => {
-    pieces.increments("piece_id");
-    pieces.string("name").notNullable();
-    pieces.string("description", 10000).notNullable;
+  await knex.schema.createTable("project", (project) => {
+    project.increments("piece_id");
+    project.string("title").notNullable();
+    project.string("description", 10000).notNullable;
+    project
+    .integer("category_id")
+    .unsigned()
+    .notNullable()
+    .references("category_id")
+    .inTable("categories")
+    .onDelete("CASCADE");
+    project.integer('year').unsigned().notNullable()
+    project.boolean('wip').defaultTo(true)
+    project.timestamps(false,true);
   });
 };
 
 exports.down = async (knex) => {
-  await knex.schema.dropTableIfExists("pieces");
-  await knex.schema.dropTableIfExists("series");
+  await knex.schema.dropTableIfExists("project");
+  await knex.schema.dropTableIfExists("collection");
   await knex.schema.dropTableIfExists("categories");
   await knex.schema.dropTableIfExists("messages");
   await knex.schema.dropTableIfExists("users");
