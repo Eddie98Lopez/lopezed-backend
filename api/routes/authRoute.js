@@ -3,7 +3,6 @@ const express = require('express')
 
 const router = express.Router()
 
-function getAllUsers() { return db('users') }
 
 async function insertUser(user) {
   // WITH POSTGRES WE CAN PASS A "RETURNING ARRAY" AS 2ND ARGUMENT TO knex.insert/update
@@ -13,14 +12,16 @@ async function insertUser(user) {
   return newUserObject // { user_id: 7, username: 'foo', password: 'xxxxxxx' }
 }
 
-
-router.get('/', async (req, res) => {
-    res.json(await getAllUsers())
-  })
   
-router.post('/', async (req, res) => {
+router.post('/register', async (req, res) => {
     res.status(201).json(await insertUser(req.body))
   })
+
+  router.post('/login', async (req, res) => {
+    res.status(201).json(await insertUser(req.body))
+  })
+
+
 
 
   module.exports = router

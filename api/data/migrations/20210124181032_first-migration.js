@@ -11,8 +11,14 @@ exports.up = async (knex) => {
     messages.string("last").notNullable();
     messages.integer("phone");
     messages.string("email").notNullable();
-    messages.string("message",100000).notNullable();
+    messages.string("message", 100000).notNullable();
     messages.timestamps(false, true);
+  });
+  await knex.schema.createTable("images", (images) => {
+    images.increments("image_id");
+    images.string("image_title").notNullable();
+    images.string("image_url", 2000).notNullable();
+    images.timestamps(false, true);
   });
   await knex.schema.createTable("categories", (categories) => {
     categories.increments("category_id");
@@ -26,19 +32,25 @@ exports.up = async (knex) => {
     collection.timestamps(false, true);
   });
   await knex.schema.createTable("project", (project) => {
-    project.increments("piece_id");
+    project.increments("project_id");
     project.string("title").notNullable();
     project.string("description", 10000).notNullable;
     project
-    .integer("category_id")
-    .unsigned()
-    .notNullable()
-    .references("category_id")
-    .inTable("categories")
-    .onDelete("CASCADE");
-    project.integer('year').unsigned().notNullable()
-    project.boolean('wip').defaultTo(true)
-    project.timestamps(false,true);
+      .integer("cover_photo")
+      .unsigned()
+      .references("image_id")
+      .inTable("images")
+      .onDelete("CASCADE");
+    project
+      .integer("category_id")
+      .unsigned()
+      .notNullable()
+      .references("category_id")
+      .inTable("categories")
+      .onDelete("CASCADE");
+    project.integer("year").unsigned().notNullable();
+    project.boolean("wip").defaultTo(true);
+    project.timestamps(false, true);
   });
 };
 
@@ -46,6 +58,7 @@ exports.down = async (knex) => {
   await knex.schema.dropTableIfExists("project");
   await knex.schema.dropTableIfExists("collection");
   await knex.schema.dropTableIfExists("categories");
+  await knex.schema.dropTableIfExists("images");
   await knex.schema.dropTableIfExists("messages");
   await knex.schema.dropTableIfExists("users");
 };
