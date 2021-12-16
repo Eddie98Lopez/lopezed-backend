@@ -1,4 +1,7 @@
 const db = require('./data/db-config')
+const express = require('express')
+
+const router = express.Router()
 
 function getAllUsers() { return db('users') }
 
@@ -11,10 +14,13 @@ async function insertUser(user) {
 }
 
 
-server.get('/api/users', async (req, res) => {
+server.get('/', async (req, res) => {
     res.json(await getAllUsers())
   })
   
-  server.post('/api/users', async (req, res) => {
+  server.post('/', async (req, res) => {
     res.status(201).json(await insertUser(req.body))
   })
+
+
+  module.exports = router
