@@ -1,45 +1,48 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const db = require('../data/db-config')
+const db = require("../data/db-config");
 const { getResByFilter } = require("../dbHelpers");
 
+// -------------------- Registration Helper Functions Below --------------
+
+//This function validates that all fields are filled
 const checkRegFields = (req, res, next) => {
   const { username, password, first } = req.body;
   if (!username || !password || !first) {
     res.status(400).json({ message: "all fields required" });
   } else {
-      console.log('all fields are filled')
+    console.log("all fields are filled");
     next();
   }
 };
 
+//This function hashes the user password so that it isn't visible on the database
 const hashPass = (req, res, next) => {
   const { password } = req.body;
   const hash = bcrypt.hashSync(password, 12);
   req.newUser = { ...req.body, password: hash };
-  console.log(req.newUser)
   next();
 };
 
-// ------------- LOGIN HELPER FUNCTIONS BELOW -------------------------------------------
+// ------------- LOGIN HELPER FUNCTIONS BELOW ---------------------------------------------------------------------
 
+
+//This Function validates all fields are filled when logging in
 const checkFields = (req, res, next) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
     res.status(400).json({ message: "all fields required" });
   } else {
-      console.log('all fields filled')
     next();
   }
 };
 
+//this functions checks if the user with the given username exists on the database
 const checkUserExists = async (req, res, next) => {
   try {
     const { username } = req.body;
-    console.log(username)
-    const user = await getResByFilter("users",{username:username});
-    console.log(user)
+    const user = await getResByFilter("users", { username: username });
 
     if (!user[0]) {
       res.status(400).json({ message: "username or password incorrect" });
@@ -52,6 +55,9 @@ const checkUserExists = async (req, res, next) => {
   }
 };
 
+
+/* this function compares the given password with the encrypted password on the database.
+if the passwords don't match it sends back a 403 unauthorized */
 const checkPass = (req, res, next) => {
   const hash = req.user.password;
   const { password } = req.body;
@@ -63,6 +69,13 @@ const checkPass = (req, res, next) => {
   }
 };
 
+
+// --------------- MISC ----------------------------------------------------------------------------------
+
+
+
+/* This function generates the json web token after the correct 
+username and password have been entered on login */
 const generateToken = (user, secret) => {
   const payload = {
     subject: user.user_id,
@@ -75,11 +88,15 @@ const generateToken = (user, secret) => {
   return jwt.sign(payload, secret, options);
 };
 
+
+//this function communicates with the database adds a user to the users table
 const addUser = async (table, resource) => {
-    const table_id = `${table.slice(0, table.length - 1)}_id`;
-    const [newResource] = await db(table).insert(resource).returning([table_id,'first','username'])
-    return newResource
-  };
+  const table_id = `${table.slice(0, table.length - 1)}_id`;
+  const [newResource] = await db(table)
+    .insert(resource)
+    .returning([table_id, "first", "username"]);
+  return newResource;
+};
 
 module.exports = {
   checkFields,
@@ -88,6 +105,5 @@ module.exports = {
   checkPass,
   generateToken,
   checkRegFields,
-  addUser
+  addUser,
 };
-
