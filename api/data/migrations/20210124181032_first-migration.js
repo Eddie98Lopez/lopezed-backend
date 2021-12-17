@@ -3,6 +3,7 @@ exports.up = async (knex) => {
     users.increments("user_id");
     users.string("username", 200).notNullable();
     users.string("password", 200).notNullable();
+    users.string('first').notNullable();
     users.timestamps(false, true);
   });
   await knex.schema.createTable("messages", (messages) => {

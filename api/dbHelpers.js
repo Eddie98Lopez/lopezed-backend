@@ -1,5 +1,5 @@
 
-const db = require("../data/db-config");
+const db = require("./data/db-config");
 
 const getResources = (table) => {
   return db(table);
@@ -19,7 +19,8 @@ const getResByFilter = (table, filter) => {
 
 const addResource = async (table, resource) => {
   const table_id = `${table.slice(0, table.length - 1)}_id`;
-  const [id] = await db(table).insert(resource).returning(table_id);
+  console.log(table_id)
+  const [id] = await db(table).insert(resource).returning(table_id)
   const added = await getById(table, id);
   return added
 };
