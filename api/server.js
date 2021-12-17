@@ -1,7 +1,7 @@
 const express = require('express')
 const helmet = require('helmet')
 const cors = require('cors')
-const userRouter = require('./routes/userRoute')
+const userRouter = require('./routes/authRoute')
 
 
 
