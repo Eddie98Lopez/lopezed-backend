@@ -3,6 +3,7 @@ const helmet = require('helmet')
 const cors = require('cors')
 const userRouter = require('./routes/authRoute')
 const messagesRouter = require('./routes/messagesRoute')
+const projectsRouter= require('./routes/projectsRoute')
 
 
 
@@ -13,6 +14,7 @@ server.use(cors())
 
 server.use('/api/auth', userRouter)
 server.use('/api/messages',messagesRouter)
+server.use('/api/projects',projectsRouter)
 
 
 
