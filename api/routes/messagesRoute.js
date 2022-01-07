@@ -30,7 +30,7 @@ router.get("/:id", restricted,async (req, res) => {
 router.post("/", validateMessage, async (req, res) => {
   try {
     const newMessage = await addResource("messages", req.body);
-    console.log(newMessage);
+    //console.log(newMessage);
     res.status(200).json(newMessage);
   } catch (error) {
     res.status(500).json("something went wrong bro");
